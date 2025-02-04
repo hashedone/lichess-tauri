@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { open } from '@tauri-apps/api/dialog'
+import { open } from '@tauri-apps/plugin-dialog'
 import { Ref, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { LichessEngine, NewEngine, useEnginesStore } from '../stores/engines'
@@ -10,7 +10,7 @@ import {
   MaxHashOption,
   sysinfo,
 } from '../utils/sysyinfo'
-import { invoke } from '@tauri-apps/api/tauri'
+import { invoke } from '@tauri-apps/api/core'
 
 const route = useRoute()
 const router = useRouter()

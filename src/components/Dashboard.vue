@@ -5,7 +5,7 @@ import GettingStarted from './GettingStarted.vue'
 import { useAnalysisStore } from '../stores/analysis'
 import { useEnginesStore } from '../stores/engines'
 import { useSettingsStore } from '../stores/settings'
-import { invoke } from '@tauri-apps/api'
+import { invoke } from '@tauri-apps/api/core'
 
 const engines = useEnginesStore()
 const settings = useSettingsStore()

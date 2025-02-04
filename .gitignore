@@ -24,3 +24,5 @@ dist-ssr
 
 /icon.png
 /TODO.md
+src-tauri/gen/**
+dist/**

@@ -9,9 +9,9 @@ use login::start_oauth_flow;
 use serde_json::{json, Value};
 use std::thread;
 use sysinfo::{CpuExt, System, SystemExt};
-use tauri::Window;
+use tauri::{AppHandle, Manager, State, Window};
 
-use crate::db::establish_connection;
+use crate::db::Db;
 
 mod engine_directory;
 mod lichess;
@@ -22,8 +22,8 @@ pub mod schema;
 pub mod utils;
 
 #[tauri::command]
-fn get_all_settings() -> Value {
-    let settings = db::get_all_settings();
+fn get_all_settings(db: State<Db>) -> Value {
+    let settings = db.get_all_settings();
 
     let mut json = json!({});
     for setting in settings {
@@ -34,18 +34,18 @@ fn get_all_settings() -> Value {
 }
 
 #[tauri::command]
-fn update_setting(key: &str, value: &str) {
-    db::update_setting(key, value);
+fn update_setting(db: State<Db>, key: &str, value: &str) {
+    db.update_setting(key, value);
 }
 
 #[tauri::command]
-fn add_engine(engine_id: &str, binary_location: &str) {
-    db::add_engine(engine_id, binary_location);
+fn add_engine(db: State<Db>, engine_id: &str, binary_location: &str) {
+    db.add_engine(engine_id, binary_location);
 }
 
 #[tauri::command]
-fn delete_engine(engine_id: &str) {
-    db::delete_engine(engine_id);
+fn delete_engine(db: State<Db>, engine_id: &str) {
+    db.delete_engine(engine_id);
 }
 
 #[tauri::command]
@@ -79,35 +79,33 @@ fn get_sysinfo() -> Value {
 }
 
 #[tauri::command]
-fn download_engine_to_folder(engine: Engine) -> String {
-    engine_directory::install(engine)
+fn download_engine_to_folder(app: AppHandle, engine: Engine) -> String {
+    engine_directory::install(app.path(), engine)
         .into_os_string()
         .into_string()
         .unwrap()
 }
 
 #[tauri::command]
-fn get_app_data_dir() -> String {
-    utils::get_app_data_dir()
+fn get_app_data_dir(app: AppHandle) -> String {
+    utils::get_app_data_dir(app.path())
         .into_os_string()
         .into_string()
         .unwrap()
 }
 
 #[tauri::command]
-fn login_with_lichess(window: Window) {
-    start_oauth_flow(window);
+fn login_with_lichess(db: State<Db>, window: Window) {
+    start_oauth_flow(&db, window);
 }
 
 #[tauri::command]
-fn logout(window: Window) {
-    login::logout(window);
+fn logout(db: State<Db>, window: Window) {
+    login::logout(&db, window);
 }
 
 fn main() {
     pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!();
-    let mut connection = establish_connection();
-    connection.run_pending_migrations(MIGRATIONS).unwrap();
 
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
@@ -122,10 +120,17 @@ fn main() {
             update_setting,
             open_path
         ])
+        .plugin(tauri_plugin_dialog::init())
         .setup(|app| {
-            let app_handle = app.handle();
+            let db = Db::new(app.path());
+            db.establish_connection()
+                .run_pending_migrations(MIGRATIONS)
+                .unwrap();
+            app.manage(db.clone());
 
-            thread::spawn(move || match lichess::work(&app_handle) {
+            let app_handle = app.handle().clone();
+
+            thread::spawn(move || match lichess::work(&app_handle, db) {
                 Ok(_) => println!("Success"),
                 Err(e) => println!("Error: {}", e),
             });

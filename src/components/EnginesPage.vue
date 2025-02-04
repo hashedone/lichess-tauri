@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { invoke } from '@tauri-apps/api/tauri'
+import { invoke } from '@tauri-apps/api/core'
 import { saveEngineToLichess } from '../utils/engine-crud'
 import { RouterLink } from 'vue-router'
 import {

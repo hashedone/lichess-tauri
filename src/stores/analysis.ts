@@ -6,7 +6,6 @@ import { defineStore } from 'pinia'
 export interface LichessWorkEvent {
   id: number
   event: string
-  windowLabel: string
   payload: {
     event: 'Sleep' | 'Status' | 'Uci'
     message: string
@@ -19,7 +18,6 @@ type StatusLevel = 'Info' | 'Warn' | 'Error'
 export interface LichessStatusEvent {
   id: number
   event: string
-  windowLabel: string
   payload: {
     status: string
     level: StatusLevel

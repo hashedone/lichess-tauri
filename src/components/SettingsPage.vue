@@ -2,7 +2,7 @@
 import { useSettingsStore } from '../stores/settings'
 import LichessLogin from './LichessLogin.vue'
 import { ref } from 'vue'
-import { invoke } from '@tauri-apps/api'
+import { invoke } from '@tauri-apps/api/core'
 import { loadSettingsFromDatabase, trimTrailingSlash } from '../utils/settings'
 import { getVersion } from '@tauri-apps/api/app'
 

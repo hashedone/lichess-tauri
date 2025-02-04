@@ -2,79 +2,67 @@
   "build": {
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "npm run build",
-    "devPath": "http://localhost:1420",
-    "distDir": "../dist",
-    "withGlobalTauri": false
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420"
   },
-  "package": {
-    "productName": "Lichess Local Engine",
-    "version": "../package.json"
-  },
-  "tauri": {
-    "allowlist": {
-      "dialog": {
-        "open": true
-      },
-      "fs": {
-        "all": true,
-        "scope": ["$LOCALDATA/*"]
-      },
-      "shell": {
-        "all": true,
-        "execute": true,
-        "open": "^",
-        "scope": []
-      }
+  "bundle": {
+    "active": true,
+    "category": "DeveloperTool",
+    "copyright": "",
+    "targets": "all",
+    "externalBin": [],
+    "icon": [
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "certificateThumbprint": null,
+      "digestAlgorithm": "sha256",
+      "timestampUrl": ""
     },
-    "bundle": {
-      "active": true,
-      "category": "DeveloperTool",
-      "copyright": "",
+    "longDescription": "",
+    "macOS": {
+      "entitlements": null,
+      "exceptionDomain": "",
+      "frameworks": [],
+      "providerShortName": null,
+      "signingIdentity": null
+    },
+    "resources": [],
+    "shortDescription": "",
+    "linux": {
       "deb": {
         "depends": []
-      },
-      "externalBin": [],
-      "icon": [
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ],
-      "identifier": "dev.lichess.tauri",
-      "longDescription": "",
-      "macOS": {
-        "entitlements": null,
-        "exceptionDomain": "",
-        "frameworks": [],
-        "providerShortName": null,
-        "signingIdentity": null
-      },
-      "resources": [],
-      "shortDescription": "",
-      "targets": "all",
-      "windows": {
-        "certificateThumbprint": null,
-        "digestAlgorithm": "sha256",
-        "timestampUrl": ""
       }
     },
-    "security": {
-      "csp": null
-    },
+    "createUpdaterArtifacts": "v1Compatible"
+  },
+  "productName": "Lichess Local Engine",
+  "mainBinaryName": "Lichess Local Engine",
+  "version": "../package.json",
+  "identifier": "dev.lichess.tauri",
+  "plugins": {
     "updater": {
-      "active": false,
-      "endpoints": ["https://fitztrev.github.io/lichess-tauri/version.json"],
-      "dialog": true,
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDQ0MkZERDE3RkY5ODhCQTUKUldTbGk1ai9GOTB2UkJlbUtCTGdYWXJ4VkRoQ2szSnhMc1dkZ01aSWhOekE5L0hocUxFb0NzM3gK"
-    },
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDQ0MkZERDE3RkY5ODhCQTUKUldTbGk1ai9GOTB2UkJlbUtCTGdYWXJ4VkRoQ2szSnhMc1dkZ01aSWhOekE5L0hocUxFb0NzM3gK",
+      "endpoints": ["https://fitztrev.github.io/lichess-tauri/version.json"]
+    }
+  },
+  "app": {
+    "withGlobalTauri": false,
     "windows": [
       {
         "fullscreen": false,
         "height": 800,
         "resizable": true,
         "title": "Lichess Local Engine",
-        "width": 1200
+        "width": 1200,
+        "useHttpsScheme": true
       }
-    ]
+    ],
+    "security": {
+      "csp": null
+    }
   }
 }

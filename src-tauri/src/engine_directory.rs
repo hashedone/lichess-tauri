@@ -7,6 +7,8 @@ use std::path::PathBuf;
 use serde::Deserialize;
 use serde::Serialize;
 use tar::Archive;
+use tauri::path::PathResolver;
+use tauri::Runtime;
 
 use crate::utils::get_app_data_dir;
 
@@ -45,8 +47,8 @@ fn cpu_architecture() -> &'static str {
     }
 }
 
-pub fn install(engine: Engine) -> PathBuf {
-    let engines_path = get_app_data_dir().join("engines");
+pub fn install(resolver: &PathResolver<impl Runtime>, engine: Engine) -> PathBuf {
+    let engines_path = get_app_data_dir(resolver).join("engines");
 
     assert!(
         engines_path.exists() || std::fs::create_dir(&engines_path).is_ok(),

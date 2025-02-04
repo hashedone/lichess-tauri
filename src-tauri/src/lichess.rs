@@ -10,9 +10,9 @@ use reqwest::{
     header::{self, HeaderMap},
 };
 use serde::{Deserialize, Serialize};
-use tauri::{AppHandle, Manager};
+use tauri::{AppHandle, Emitter};
 
-use crate::db;
+use crate::db::Db;
 
 #[allow(dead_code)]
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -104,22 +104,22 @@ struct StatusPayload {
 
 fn send_event_to_frontend(app_handle: &AppHandle, event: &str, payload: EventPayload) {
     println!("event: {} | {:?}", event, payload);
-    app_handle.emit_all(event, payload).unwrap();
+    app_handle.emit(event, payload).unwrap();
 }
 
 fn send_status_to_frontend(app_handle: &AppHandle, payload: StatusPayload) {
     app_handle
-        .emit_all("lichess::send_status_to_frontend", payload)
+        .emit("lichess::send_status_to_frontend", payload)
         .unwrap();
 }
 
-pub fn work(app_handle: &AppHandle) -> Result<(), Box<dyn Error>> {
+pub fn work(app_handle: &AppHandle, db: Db) -> Result<(), Box<dyn Error>> {
     let mut backoff_duration_secs = 1;
 
     std::thread::sleep(std::time::Duration::from_secs(3));
 
     loop {
-        let api_token = db::get_setting("lichess_token");
+        let api_token = db.get_setting("lichess_token");
         match api_token {
             Some(_) => {}
             None => {
@@ -135,7 +135,7 @@ pub fn work(app_handle: &AppHandle) -> Result<(), Box<dyn Error>> {
             }
         }
 
-        let provider_secret = db::get_setting("provider_secret");
+        let provider_secret = db.get_setting("provider_secret");
         match provider_secret {
             Some(_) => {}
             None => {
@@ -151,7 +151,7 @@ pub fn work(app_handle: &AppHandle) -> Result<(), Box<dyn Error>> {
             }
         }
 
-        let engine_host = db::get_setting("engine_host");
+        let engine_host = db.get_setting("engine_host");
         match engine_host {
             Some(_) => {}
             None => {
@@ -167,7 +167,7 @@ pub fn work(app_handle: &AppHandle) -> Result<(), Box<dyn Error>> {
             }
         }
 
-        if db::get_engine_count() == 0 {
+        if db.get_engine_count() == 0 {
             send_status_to_frontend(
                 app_handle,
                 StatusPayload {
@@ -239,7 +239,7 @@ pub fn work(app_handle: &AppHandle) -> Result<(), Box<dyn Error>> {
             },
         );
 
-        let binary_filepath = db::get_engine_binary_path(&analysis_request.engine.id);
+        let binary_filepath = db.get_engine_binary_path(&analysis_request.engine.id);
         match binary_filepath {
             Some(_) => {}
             None => {
