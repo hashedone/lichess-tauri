@@ -121,6 +121,7 @@ fn main() {
             open_path
         ])
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .setup(|app| {
             let db = Db::new(app.path());
             db.establish_connection()
